@@ -4,8 +4,9 @@ import { auth } from "@/auth";
 import { CreateUserSchema } from "@/validations/auth";
 import bcrypt from "bcryptjs";
 import * as v from "valibot";
+import type { Session } from "next-auth";
 
-function isSuperadmin(session: Awaited<ReturnType<typeof auth>>) {
+function isSuperadmin(session: Session | null) {
   return session?.user?.role === "superadmin";
 }
 
