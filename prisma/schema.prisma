@@ -1,0 +1,60 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.pnpm/@prisma+client@7.5.0_prisma@7.5.0_@types+react@19.2.14_react-dom@19.2.4_react@19.2.4__r_91089ffd60048d4eaa65cb128d7b1531/node_modules/.prisma/client"
+}
+
+enum Role {
+  superadmin
+  admin
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(admin)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Link {
+  id           String   @id @default(uuid())
+  parentId     String?
+  parent       Link?    @relation("LinkChildren", fields: [parentId], references: [id], onDelete: Cascade)
+  children     Link[]   @relation("LinkChildren")
+  title        String
+  description  String?
+  slug         String   @unique
+  targetUrl    String
+  isProtected  Boolean  @default(false)
+  passwordHash String?
+  imageUrl     String?
+  isActive     Boolean  @default(true)
+  sortOrder    Int      @default(0)
+  clickCount   Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  accessTokens AccessToken[]
+
+  @@map("links")
+}
+
+model AccessToken {
+  id        String   @id @default(uuid())
+  token     String   @unique @default(uuid())
+  linkId    String
+  link      Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("access_tokens")
+}
