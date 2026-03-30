@@ -4,12 +4,13 @@ import { VerifyPasswordSchema } from "@/validations/verify";
 import bcrypt from "bcryptjs";
 import * as v from "valibot";
 
-type Params = { params: { slug: string } };
+type Params = { params: Promise<{ slug: string }> };
 
 // POST /api/verify/[slug] — verify password for a protected link
 // Returns a short-lived access token, never the raw targetUrl
 export async function POST(req: NextRequest, { params }: Params) {
   try {
+    const { slug } = await params;
     const body = await req.json();
     const parsed = v.safeParse(VerifyPasswordSchema, body);
 
@@ -21,7 +22,7 @@ export async function POST(req: NextRequest, { params }: Params) {
     const { password } = parsed.output;
 
     const link = await prisma.link.findUnique({
-      where: { slug: params.slug },
+      where: { slug },
     });
 
     if (!link || !link.isActive) {

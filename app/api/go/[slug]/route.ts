@@ -1,17 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-type Params = { params: { slug: string } };
+type Params = { params: Promise<{ slug: string }> };
 
 // GET /api/go/[slug] — handles link click for non-protected links
 // Increments clickCount and redirects to targetUrl
 export async function GET(req: NextRequest, { params }: Params) {
   try {
+    const { slug } = await params;
     const { searchParams } = new URL(req.url);
     const token = searchParams.get("token");
 
     const link = await prisma.link.findUnique({
-      where: { slug: params.slug },
+      where: { slug },
     });
 
     if (!link || !link.isActive) {
@@ -22,7 +23,7 @@ export async function GET(req: NextRequest, { params }: Params) {
     if (link.isProtected) {
       if (!token) {
         return NextResponse.redirect(
-          new URL(`/go/${params.slug}`, req.url)
+          new URL(`/go/${slug}`, req.url)
         );
       }
 
@@ -38,7 +39,7 @@ export async function GET(req: NextRequest, { params }: Params) {
         accessToken.expiresAt < new Date()
       ) {
         // Invalid or expired token — send back to password page with error
-        const passwordUrl = new URL(`/go/${params.slug}`, req.url);
+        const passwordUrl = new URL(`/go/${slug}`, req.url);
         passwordUrl.searchParams.set("error", "expired");
         return NextResponse.redirect(passwordUrl);
       }
