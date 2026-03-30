@@ -75,10 +75,10 @@ export default function LoginPage() {
               unoptimized
             />
           </div>
-          <h1 className="text-[1.375rem] font-bold text-[#f1f5f9] m-0">
+          <h1 className="text-[1.375rem] font-bold text-(--text-primary) m-0">
             Admin Login
           </h1>
-          <p className="text-[0.9rem] text-[#64748b] m-0">
+          <p className="text-[0.9rem] text-(--text-secondary) m-0">
             Sign in to manage your portal
           </p>
         </div>
