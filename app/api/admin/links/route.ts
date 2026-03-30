@@ -25,7 +25,7 @@ export async function GET() {
       return {
         ...rest,
         hasPassword: Boolean(passwordHash),
-        children: children.map(({ passwordHash: cph, ...child }) => ({
+        children: children.map(({ passwordHash: cph, ...child }: { passwordHash: string | null; [key: string]: unknown }) => ({
           ...child,
           hasPassword: Boolean(cph),
           children: [],
