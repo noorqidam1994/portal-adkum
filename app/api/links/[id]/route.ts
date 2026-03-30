@@ -24,7 +24,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
     return NextResponse.json({
       ...rest,
       hasPassword: Boolean(passwordHash),
-      children: children.map(({ passwordHash: cph, ...c }) => ({
+      children: children.map(({ passwordHash: cph, ...c }: { passwordHash: string | null; [key: string]: unknown }) => ({
         ...c,
         hasPassword: Boolean(cph),
         children: [],
@@ -91,7 +91,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
     return NextResponse.json({
       ...rest,
       hasPassword: Boolean(passwordHash),
-      children: children.map(({ passwordHash: cph, ...c }) => ({
+      children: children.map(({ passwordHash: cph, ...c }: { passwordHash: string | null; [key: string]: unknown }) => ({
         ...c,
         hasPassword: Boolean(cph),
         children: [],
